@@ -1,4 +1,4 @@
-name: Run Tests
+name: CI/CD Pipeline
 
 on:
   push:
@@ -21,40 +21,22 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Install dependencies
+    - name: Install Node.js dependencies
       run: npm install
 
-    - name: Run tests
+    - name: Run Node.js tests
       run: npm test
 
-      name: CI/CD Pipeline
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    - name: Install Python dependencies
+      run: |
+        pip install selenium
+        # Instala cualquier otra dependencia que necesites
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          pip install selenium
-          # Instala cualquier otra dependencia que necesites
-
-      - name: Run Selenium tests
-        run: |
-          python test_registration.py
-
+    - name: Run Selenium tests
+      run: |
+        python test_registration.py

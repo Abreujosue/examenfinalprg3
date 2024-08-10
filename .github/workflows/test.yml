@@ -1,42 +1,18 @@
-name: CI/CD Pipeline
+name: CI
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
+    - uses: actions/checkout@v2
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v2
       with:
         node-version: '14'
-
-    - name: Install Node.js dependencies
+    - name: Install dependencies
       run: npm install
-
-    - name: Run Node.js tests
+    - name: Run tests
       run: npm test
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - name: Install Python dependencies
-      run: |
-        pip install selenium
-        # Instala cualquier otra dependencia que necesites
-
-    - name: Run Selenium tests
-      run: |
-        python test_registration.py

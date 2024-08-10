@@ -13,13 +13,13 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="#home">Home</a>
+                    <a class="nav-link" href="#" onclick="showSection('home')">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#select">Seleccionar Horario</a>
+                    <a class="nav-link" href="#" onclick="showSection('select')">Seleccionar Horario</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#result">Resultado Final</a>
+                    <a class="nav-link" href="#" onclick="showSection('result')">Resultado Final</a>
                 </li>
             </ul>
         </div>
@@ -37,20 +37,31 @@
                     <label for="email">Correo Electrónico</label>
                     <input type="email" class="form-control" id="email" required>
                 </div>
-                <button type="button" class="btn btn-primary" onclick="goToSelect()">Siguiente</button>
+                <button type="button" class="btn btn-primary" onclick="registerUser()">Registrar</button>
                 <button type="button" class="btn btn-secondary" onclick="clearForm()">Limpiar</button>
             </form>
+            <div id="confirmationMessage" class="alert alert-success mt-3" style="display:none;">
+                Usuario registrado correctamente.
+            </div>
         </div>
 
         <div id="select" class="section" style="display:none;">
             <h2>Seleccionar Horario</h2>
             <form id="selectForm">
                 <div class="form-group">
+                    <label for="career">Carrera</label>
+                    <select class="form-control" id="career" onchange="filterSubjects()" required>
+                        <option value="">Selecciona tu carrera</option>
+                        <option value="engineering">Ingeniería</option>
+                        <option value="humanities">Humanidades</option>
+                        <option value="science">Ciencias</option>
+                        <option value="arts">Artes</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="course">Materia</label>
                     <select class="form-control" id="course" required>
-                        <option value="mathematics">Matemáticas</option>
-                        <option value="physics">Física</option>
-                        <option value="chemistry">Química</option>
+                        <!-- Las opciones de materias se llenarán dinámicamente -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -58,17 +69,108 @@
                     <input type="text" class="form-control" id="time" required>
                 </div>
                 <button type="button" class="btn btn-primary" onclick="goToResult()">Siguiente</button>
-                <button type="button" class="btn btn-secondary" onclick="goToHome()">Volver</button>
+                <button type="button" class="btn btn-secondary" onclick="showSection('home')">Volver</button>
             </form>
         </div>
 
         <div id="result" class="section" style="display:none;">
             <h2>Resultado Final</h2>
             <p id="resultData"></p>
-            <button type="button" class="btn btn-secondary" onclick="goToSelect()">Volver a Selección de Materias</button>
+            <button type="button" class="btn btn-secondary" onclick="showSection('select')">Volver a Selección de Materias</button>
         </div>
     </div>
 
-    <script src="scripts.js"></script>
+    <script>
+        // Datos de materias por carrera
+        const subjectsByCareer = {
+            engineering: [
+                { value: 'mathematics', text: 'Matemáticas' },
+                { value: 'physics', text: 'Física' },
+                { value: 'chemistry', text: 'Química' }
+            ],
+            humanities: [
+                { value: 'history', text: 'Historia' },
+                { value: 'literature', text: 'Literatura' },
+                { value: 'philosophy', text: 'Filosofía' }
+            ],
+            science: [
+                { value: 'biology', text: 'Biología' },
+                { value: 'earth-science', text: 'Ciencias de la Tierra' },
+                { value: 'environmental-science', text: 'Ciencias Ambientales' }
+            ],
+            arts: [
+                { value: 'drawing', text: 'Dibujo' },
+                { value: 'painting', text: 'Pintura' },
+                { value: 'sculpture', text: 'Escultura' }
+            ]
+        };
+
+        function registerUser() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            if (name && email) {
+                // Mostrar el mensaje de confirmación
+                document.getElementById('confirmationMessage').style.display = 'block';
+
+                // Ocultar el mensaje después de unos segundos
+                setTimeout(() => {
+                    document.getElementById('confirmationMessage').style.display = 'none';
+                    // Ir a la siguiente sección
+                    goToSelect();
+                }, 2000); // El mensaje se oculta después de 2 segundos
+            } else {
+                alert('Por favor, ingresa tu nombre y correo electrónico.');
+            }
+        }
+
+        function goToSelect() {
+            showSection('select');
+        }
+
+        function clearForm() {
+            document.getElementById('infoForm').reset();
+        }
+
+        function goToResult() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const career = document.getElementById('career').value;
+            const course = document.getElementById('course').value;
+            const time = document.getElementById('time').value;
+
+            document.getElementById('resultData').innerText = 
+                `Nombre: ${name}\nCorreo Electrónico: ${email}\nCarrera: ${career}\nMateria: ${course}\nHorario: ${time}`;
+            
+            showSection('result');
+        }
+
+        function filterSubjects() {
+            const career = document.getElementById('career').value;
+            const courseSelect = document.getElementById('course');
+            
+            // Limpia las opciones actuales
+            courseSelect.innerHTML = '';
+
+            if (subjectsByCareer[career]) {
+                subjectsByCareer[career].forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.value;
+                    option.text = subject.text;
+                    courseSelect.add(option);
+                });
+            }
+        }
+
+        function showSection(sectionId) {
+            // Oculta todas las secciones
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Muestra la sección seleccionada
+            document.getElementById(sectionId).style.display = 'block';
+        }
+    </script>
 </body>
 </html>

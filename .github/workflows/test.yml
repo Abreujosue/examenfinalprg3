@@ -26,3 +26,35 @@ jobs:
 
     - name: Run tests
       run: npm test
+
+      name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install selenium
+          # Instala cualquier otra dependencia que necesites
+
+      - name: Run Selenium tests
+        run: |
+          python test_registration.py
+
